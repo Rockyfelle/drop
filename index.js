@@ -27,6 +27,8 @@ const numColor = {
     4096: "#442D1A"
 }
 const gameQueue = [];
+const isMobile = isMobileDevice();
+const fontMulti = cellSize / 100;
 let secondsPassed;
 let oldTimeStamp;
 let fps;
@@ -51,16 +53,16 @@ spawnBlock();
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 canvas.width = window.innerWidth * window.devicePixelRatio;
-canvas.height = window.innerHeight * window.devicePixelRatio;
+canvas.height = window.innerHeight //* window.devicePixelRatio;
 //context.scale(1 / window.devicePixelRatio, 1 / window.devicePixelRatio);
 const areaX = canvas.width / 2 - areaPlayGridWidth / 2;
 const areaY = canvas.height / 2 - areaPlayGridHeight / 2;
-window.addEventListener('touchmove', handleTouchMove, false);
-window.addEventListener('touchstart', handleTouchMove, false);
-window.addEventListener('touchend', handleTouchEnd, false);
-window.addEventListener("mousemove", mouseMoveHandler, false);
-window.addEventListener("mousedown", mouseClickHandler, false);
-window.addEventListener("mouseup", mouseUnClickHandler, false);
+if (isMobile) window.addEventListener('touchmove', handleTouchMove, false);
+if (isMobile) window.addEventListener('touchstart', handleTouchMove, false);
+if (isMobile) window.addEventListener('touchend', handleTouchEnd, false);
+if (!isMobile) window.addEventListener("mousemove", mouseMoveHandler, false);
+if (!isMobile) window.addEventListener("mousedown", mouseClickHandler, false);
+if (!isMobile) window.addEventListener("mouseup", mouseUnClickHandler, false);
 
 // resize the canvas to fill browser window dynamically
 //window.addEventListener('resize', resizeCanvas, false);
@@ -353,7 +355,8 @@ function draw() {
     context.fillText("Y: " + mouse.yy, 10, 90);
     context.fillText("Type: " + (gameQueue.length > 0 ? gameQueue[0].type : 'undf'), 10, 120);
     context.fillText("CanW: " + canvas.width, 10, 150);
-    context.fillText(": " , 10, 180);
+    context.fillText("CanH: " + canvas.height, 10, 180);
+    context.fillText("HHH: " + window.innerHeight, 10, 210);
 }
 
 
@@ -364,8 +367,8 @@ function draw() {
 
 function drawBlock(context, x, y, w, h, num) {
     context.fillStyle = numColor[pow2floor(num)];
-    roundedRectangle(context, x + 4, y + 4, w - 8, h - 8, 10);
-    context.font = 'bold 30px Arial';
+    roundedRectangle(context, x + 4, y + 4, w - 8, h - 8, 10 * fontMulti);
+    context.font = 'bold ' + 30 * fontMulti + 'px Arial';
     context.fillStyle = 'white';
     context.textAlign = "center";
     context.fillText(num, x + cellSize / 2, 11 + y + cellSize / 2);
@@ -408,6 +411,11 @@ function mouseClickHandler(e) {
 function mouseUnClickHandler(e) {
     hasUnClicked = true;
 }
+
+//https://coderwall.com/p/i817wa/one-line-function-to-detect-mobile-devices-with-javascript
+function isMobileDevice() {
+    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+};
 
 //https://codepen.io/simon-wu/pen/ExgLEXQ
 function roundedRectangle(context, x, y, width, height, radius) {
