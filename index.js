@@ -1,5 +1,5 @@
 /*------------ GLOBAL VARIABLES ------------*/
-const cellsHorizontal = 5;
+const cellsHorizontal = 6;
 const cellsVertical = 8;
 const cellSize = Math.min(window.innerHeight * window.devicePixelRatio / cellsVertical, (window.innerWidth * window.devicePixelRatio) * (cellsVertical / cellsHorizontal) / cellsVertical)//75;
 const playGrid = [...Array(cellsHorizontal)].map(x => Array(cellsVertical).fill(0));
@@ -12,7 +12,7 @@ const mergeSpeed = 0.15;
 const multiplySpeed = 0.1;
 const mouse = { x: 0, y: 0 };
 const player = { x: 0, y: 0, num: 0 };
-const numColor = {
+const numColorDefault = {
     2: "#B61616",
     4: "#44B616",
     8: "#129263",
@@ -25,7 +25,34 @@ const numColor = {
     1024: "#371A44",
     2048: "#441A38",
     4096: "#442D1A"
+};
+const numColorModern = {
+    2: "#12FF00",
+    4: "#10E800",
+    8: "#0FD400",
+    16: "#0EC500",
+    32: "#0CA900",
+    64: "#0A9300",
+    128: "#097E00",
+    256: "#086C00",
+    512: "#065600",
+    1024: "#054100",
+    2048: "#043300",
+    4096: "#021C00"
+};
+const theme = {
+    name: "default",
+    gridColorPrimary: "#383838",
+    gridColorSecondary: "#484848",
+    block: numColorDefault,
 }
+/*
+const theme = {
+    name: "modern",
+    gridColorPrimary: "#181818",
+    gridColorSecondary: "#222222",
+    block: numColorModern,
+}*/
 const gameQueue = [];
 const isMobile = isMobileDevice();
 const fontMulti = cellSize / 100;
@@ -301,10 +328,10 @@ function draw() {
     //Draw playarea background
     context.fillStyle = 'black';
     context.fillRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = areaPlayGridColor;
+    context.fillStyle = theme.gridColorPrimary;
     context.fillRect(canvas.width / 2 - areaPlayGridWidth / 2, canvas.height / 2 - areaPlayGridHeight / 2, areaPlayGridWidth, areaPlayGridHeight);
     for (let i = 0; i < Math.floor(cellsHorizontal); i += 2) {
-        context.fillStyle = areaPlayGridColor2;
+        context.fillStyle = theme.gridColorSecondary;
         context.fillRect(canvas.width / 2 - areaPlayGridWidth / 2 + cellSize * i, canvas.height / 2 - areaPlayGridHeight / 2, cellSize, areaPlayGridHeight);
     }
     context.fillStyle = '#242424';
@@ -366,7 +393,8 @@ function draw() {
 /*------------ HELP FUNCTIONS ------------*/
 
 function drawBlock(context, x, y, w, h, num) {
-    context.fillStyle = numColor[pow2floor(num)];
+    context.fillStyle = theme.block[pow2floor(num)];
+    context.strokeStyle = theme.block[pow2floor(num)];
     roundedRectangle(context, x + 4, y + 4, w - 8, h - 8, 10 * fontMulti);
     context.font = 'bold ' + 30 * fontMulti + 'px Arial';
     context.fillStyle = 'white';
@@ -429,6 +457,7 @@ function roundedRectangle(context, x, y, width, height, radius) {
     context.arcTo(x, y, x + width, y, radius);
     context.closePath();
     context.fill();
+    //context.stroke();
 }
 
 //https://stackoverflow.com/questions/26965171/fast-nearest-power-of-2-in-javascript
