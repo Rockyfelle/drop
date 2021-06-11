@@ -1,8 +1,8 @@
 /*------------ GLOBAL VARIABLES ------------*/
-const cellSize = 75;
 const cellsHorizontal = 5;
 const cellsVertical = 8;
-const playGrid = [...Array(cellsHorizontal)].map(x => Array(cellsVertical).fill(0))
+const cellSize = Math.min(window.innerHeight * window.devicePixelRatio / cellsVertical, (window.innerWidth * window.devicePixelRatio) * (cellsVertical / cellsHorizontal) / cellsVertical)//75;
+const playGrid = [...Array(cellsHorizontal)].map(x => Array(cellsVertical).fill(0));
 const areaPlayGridWidth = cellsHorizontal * cellSize;
 const areaPlayGridHeight = cellsVertical * cellSize;
 const areaPlayGridColor = "#383838";
@@ -50,8 +50,9 @@ spawnBlock();
 /*------------ CANVAS INIT ------------*/
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = window.innerWidth * window.devicePixelRatio;
+canvas.height = window.innerHeight * window.devicePixelRatio;
+//context.scale(1 / window.devicePixelRatio, 1 / window.devicePixelRatio);
 const areaX = canvas.width / 2 - areaPlayGridWidth / 2;
 const areaY = canvas.height / 2 - areaPlayGridHeight / 2;
 window.addEventListener('touchmove', handleTouchMove, false);
@@ -331,7 +332,6 @@ function draw() {
         array.forEach((cell, y) => {
             if (cell !== 0) {
                 const addNum = (gameQueue.length > 0 && gameQueue[0].type === "multiply" && gameQueue[0].x === x && gameQueue[0].y === y) ? Math.floor(cell * percent) : 0;
-                if (addNum != 0) console.log(addNum)
                 drawBlock(context, areaX + x * cellSize, areaY + y * cellSize, cellSize, cellSize, cell + addNum);
             }
         });
@@ -352,6 +352,8 @@ function draw() {
     context.fillText("X: " + mouse.xx, 10, 60);
     context.fillText("Y: " + mouse.yy, 10, 90);
     context.fillText("Type: " + (gameQueue.length > 0 ? gameQueue[0].type : 'undf'), 10, 120);
+    context.fillText("CanW: " + canvas.width, 10, 150);
+    context.fillText(": " , 10, 180);
 }
 
 
